@@ -90,12 +90,11 @@ onMounted(async () => {
         </button>
       </div>
 
-      <!-- Loading State -->
-      <div v-if="isLoading" class="bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 p-6 text-center">
-        <div class="animate-spin w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full mx-auto mb-4"></div>
-        <p class="text-white">Starting session...</p>
-        <p class="text-white/60 text-sm mt-2">Please wait while we connect to your chat session</p>
-      </div>
+      <EffectsLoadingSpinner
+          v-if="isLoading"
+          text="Connecting to Jabba-AI Bot..."
+          container-class="min-h-[400px]"
+      />
 
       <!-- Error State -->
       <div v-else-if="error" class="bg-red-500/10 border border-red-500/30 rounded-lg p-6 text-center">
