@@ -22,7 +22,7 @@ const isFormValid = computed(() => {
 })
 
 const goBack = () => {
-  router.push('/dashboard/applications')
+  router.push('/dashboard/application/list')
 }
 
 const sendCreateApplicationRequest = async () => {
@@ -37,7 +37,7 @@ const sendCreateApplicationRequest = async () => {
 
     // Redirect back to applications after a short delay
     setTimeout(() => {
-      router.push('/dashboard/applications')
+      router.push('/dashboard/application/list')
     }, 1500)
 
   } catch (err) {

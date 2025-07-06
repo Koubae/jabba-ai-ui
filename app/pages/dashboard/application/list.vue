@@ -30,7 +30,7 @@ const viewApplication = (app: Application) => {
 }
 
 const createNewApplication = () => {
-  navigateTo('/dashboard/new-application')
+  navigateTo('/dashboard/application/create')
 }
 
 onMounted(async () => {
