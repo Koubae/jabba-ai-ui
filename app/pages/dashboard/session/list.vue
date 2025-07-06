@@ -37,7 +37,13 @@ const startSession = (session: Session, event: Event) => {
   // Prevent the card click event from firing
   event.stopPropagation()
 
-  navigateTo(`/dashboard/session/${session.id}/start`)
+  navigateTo({
+    path: `/dashboard/session/${session.id}/start`,
+    query: {
+      data: JSON.stringify(session)
+    }
+  })
+
 }
 
 
@@ -86,7 +92,7 @@ onMounted(async () => {
             <h3 class="text-white font-semibold text-lg">{{ session.name }}</h3>
             <button
                 @click="startSession(session, $event)"
-                class="px-3 py-1 bg-green-500/80 hover:bg-green-500 text-white text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-1 hover:scale-105 transform shadow-sm"
+                class="px-3 py-1 cursor-crosshair bg-green-500/80 hover:bg-green-500 text-white text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-1 hover:scale-105 transform shadow-sm"
                 title="Start Session"
             >
               <span class="text-xs">▶</span>
