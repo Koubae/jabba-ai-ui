@@ -3,29 +3,32 @@ export function useLogin() {
     const error = ref<string | null>(null)
     const cookie = useCookie('access_token')
 
-    async function login(application_id: string, username: string, password: string) {
+    async function login(application_id: string, username: string, password: string): Promise<boolean> {
         loading.value = true
         error.value = null
 
+        let authorized = false
+
         try {
-            const { data } = await useFetch<LoginResponse>('/api/identity/login', {
+            const data = await $fetch<LoginResponse>('/api/identity/login', {
                 method: 'POST',
                 body: { application_id, username, password }
             })
 
-            const token = data.value?.access_token
+            const token = data?.access_token
 
             if (token) {
                 cookie.value = token
             }
-
-            return data.value
+            authorized = true
         } catch (err: unknown) {
             error.value = err instanceof Error ? err.message : 'Login failed'
-            return null
         } finally {
             loading.value = false
         }
+
+        return authorized;
+
     }
 
     return { login, loading, error }
