@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import {redirectToHomePage} from "~/common/redirects.js";
 
 const applicationID = ref()
 const username = ref()
@@ -13,7 +14,7 @@ async function submitLogin() {
 
   const result = await login(applicationID.value, username.value, password.value)
   if (result) {
-    await navigateTo('/home')
+    await redirectToHomePage()
   }
 }
 

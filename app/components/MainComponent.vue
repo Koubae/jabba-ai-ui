@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import {redirectToIndexPage} from "~/common/redirects";
+
 const { isAuthenticated, logout } = useAuth()
 
 </script>
@@ -6,7 +8,7 @@ const { isAuthenticated, logout } = useAuth()
 <template>
 
   <div>
-    <p @click="navigateTo('/')" style="cursor: pointer">Jabba AI</p>
+    <p @click="redirectToIndexPage()" style="cursor: pointer">Jabba AI</p>
     <nav class="navigation">
       <Transition name="fade" mode="out-in">
         <!-- Not authenticated -->

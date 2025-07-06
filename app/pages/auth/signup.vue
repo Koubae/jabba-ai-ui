@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import {redirectToLoginPage} from "~/common/redirects.js";
 
 const applicationID = ref()
 const username = ref()
@@ -10,7 +11,7 @@ const { signup, loading, error } = useSignup()
 async function submitSignup() {
   const result = await signup(applicationID.value, username.value, password.value)
   if (result) {
-    await navigateTo('/auth/login')
+    await redirectToLoginPage()
   }
 }
 </script>

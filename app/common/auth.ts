@@ -1,3 +1,5 @@
+import {redirectToLoginPage} from "~/common/redirects";
+
 /**
  * Clear authentication data and redirect to login
  */
@@ -7,9 +9,7 @@ export function logout() {
     cookie.value = null
 
     removeUserFromStorage()
-
-    // Redirect to login page
-    navigateTo('/auth/login')
+    redirectToLoginPage()
 }
 
 /**

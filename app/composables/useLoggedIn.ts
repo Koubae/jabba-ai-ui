@@ -1,3 +1,5 @@
+import {redirectToLoginPage} from "~/common/redirects";
+
 export const useLoggedIn = () => {
     const error = ref<string | null>(null)
     const cookie = useCookie('access_token')
@@ -6,7 +8,7 @@ export const useLoggedIn = () => {
         if (!cookie.value) {
             error.value = 'Access token not found'
             if (redirectOnFail) {
-                navigateTo('/auth/login')
+                redirectToLoginPage()
                 return null
             }
 
