@@ -1,6 +1,6 @@
+
 import type { SessionConnection, ChatMessage } from "~/common/interfaces";
 import {getAuthToken} from "~/common/auth";
-
 
 export class WebSocketChat {
     private ws: WebSocket | null = null;
@@ -41,7 +41,6 @@ export class WebSocketChat {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data) as ChatMessage;
-                    console.log(JSON.stringify(message, null, 2))
                     this.onMessage(message);
                 } catch (error) {
                     console.error('Failed to parse WebSocket message:', error);
@@ -86,14 +85,7 @@ export class WebSocketChat {
             this.onError('WebSocket is not connected');
             return;
         }
-
-        const message = {
-            content,
-            timestamp: new Date().toISOString(),
-            session_id: this.sessionConnection.id
-        };
-
-        this.ws.send(JSON.stringify(message));
+        this.ws.send(content);
     }
 
     disconnect(): void {
@@ -141,17 +133,6 @@ export const useWebSocketChat = (sessionConnection: SessionConnection) => {
 
     const sendMessage = (content: string) => {
         if (!chatInstance) return;
-
-        // Add user message to UI immediately
-        const userMessage: ChatMessage = {
-            content,
-            timestamp: new Date().toISOString(),
-            sender: 'user',
-            type: 'text'
-        };
-        addMessage(userMessage);
-
-        // Send to WebSocket
         chatInstance.sendMessage(content);
     };
 

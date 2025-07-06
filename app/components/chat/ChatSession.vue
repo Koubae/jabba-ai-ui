@@ -1,3 +1,4 @@
+
 <script setup lang="ts">
 import type { SessionConnection } from "~/common/interfaces";
 import { useWebSocketChat } from "~/composables/useWebSocketChat";
@@ -7,6 +8,11 @@ interface Props {
 }
 
 const props = defineProps<Props>();
+
+const emit = defineEmits<{
+  close: [];
+}>();
+
 const messageInput = ref('');
 const messagesContainer = ref<HTMLElement>();
 
@@ -20,28 +26,38 @@ const handleSendMessage = () => {
 };
 
 const formatTime = (timestamp: string): string => {
-  return new Date(timestamp).toLocaleTimeString([], {
+  // Handle both string timestamps and numeric timestamps
+  const date = typeof timestamp === 'string' && timestamp.includes('-')
+      ? new Date(timestamp)
+      : new Date(parseInt(timestamp) * 1000); // Convert Unix timestamp to milliseconds
+
+  return date.toLocaleTimeString([], {
     hour: '2-digit',
     minute: '2-digit'
   });
 };
 
+const getRoleDisplay = (role: string): string => {
+  switch (role) {
+    case 'user':
+      return 'User';
+    case 'assistant':
+      return 'AI Assistant';
+    case 'system':
+      return 'System';
+    default:
+      return role;
+  }
+};
+
 const scrollToBottom = () => {
   nextTick(() => {
+    console.log("scrolling")
     if (messagesContainer.value) {
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
     }
   });
 };
-
-function generateUUID() {
-  // UUIDv4 pattern: xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-    const r = Math.random() * 16 | 0; // random integer from 0 to 15
-    const v = c === 'x' ? r : (r & 0x3 | 0x8); // 'y' is 8, 9, A, or B
-    return v.toString(16);
-  });
-}
 
 // Auto-scroll when new messages arrive
 watch(messages, () => {
@@ -57,9 +73,7 @@ onMounted(() => {
 onUnmounted(() => {
   disconnect();
 });
-
 </script>
-
 <template>
   <div class="flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden">
     <!-- Chat Header -->
@@ -106,15 +120,31 @@ onUnmounted(() => {
     >
       <div
           v-for="message in messages"
-          :key="message.timestamp + generateUUID()"
+          :key="`${message.session_id}-${message.timestamp}-${message.member_id}`"
           :class="[
           'flex',
           message.role === 'user' ? 'justify-end' : 'justify-start'
         ]"
       >
-        <div
-            :class="[
-              'max-w-xs lg:max-w-md px-4 py-2 rounded-lg',
+        <div class="max-w-xs lg:max-w-md">
+          <!-- Message Header (username, timestamp, etc.) -->
+          <div
+              :class="[
+              'text-xs text-gray-400 mb-1',
+              message.role === 'user' ? 'text-right' : 'text-left'
+            ]"
+          >
+            <span class="font-medium">{{ message.username }}</span>
+            <span class="mx-1">•</span>
+            <span>{{ formatTime(message.timestamp) }}</span>
+            <span v-if="message.role !== 'user'" class="mx-1">•</span>
+            <span v-if="message.role !== 'user'" class="text-xs opacity-70">{{ message.channel }}</span>
+          </div>
+
+          <!-- Message Content -->
+          <div
+              :class="[
+              'px-4 py-2 rounded-lg',
               message.role === 'user'
                 ? 'bg-blue-600 text-white ml-auto'
                 : message.role === 'system'
@@ -123,12 +153,29 @@ onUnmounted(() => {
                 ? 'bg-green-600 text-white mr-auto'
                 : 'bg-gray-700 text-white mr-auto',
             ]"
-        >
+          >
+            <p class="text-sm">{{ message.message }}</p>
+          </div>
 
-        <p class="text-sm">{{ message.message }}</p>
-          <p class="text-xs opacity-70 mt-1">
-            {{ formatTime(message.timestamp) }}
-          </p>
+          <!-- Additional Info (role badge) -->
+          <div
+              :class="[
+              'text-xs mt-1',
+              message.role === 'user' ? 'text-right' : 'text-left'
+            ]"
+          >
+            <span
+                :class="[
+                'inline-block px-2 py-1 rounded-full text-xs',
+                message.role === 'user' ? 'bg-blue-500/20 text-blue-300' :
+                message.role === 'assistant' ? 'bg-green-500/20 text-green-300' :
+                'bg-gray-500/20 text-gray-300'
+              ]"
+            >
+              {{ getRoleDisplay(message.role) }}
+            </span>
+            <span class="text-gray-500 ml-2">{{ message.member_id }}</span>
+          </div>
         </div>
       </div>
     </div>
