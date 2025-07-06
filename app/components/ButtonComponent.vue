@@ -4,7 +4,7 @@
       :disabled="disabled || loading"
       @click="$emit('click')"
   >
-    <LoadingSpinner v-if="loading" text="" container-class="p-0" />
+    <EffectsLoadingSpinner v-if="loading" text="" container-class="p-0" />
     <slot v-else />
   </button>
 </template>

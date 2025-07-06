@@ -56,7 +56,7 @@ onMounted(() => {
           </div>
 
           <!-- Loading Spinner -->
-          <LoadingSpinner
+          <EffectsLoadingSpinner
               v-if="loading"
               text="Logging in..."
               container-class="min-h-[300px]"

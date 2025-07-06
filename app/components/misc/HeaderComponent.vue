@@ -18,7 +18,10 @@ const { user } = useUser();
             @click="redirectToIndexPage()"
             class="text-2xl font-bold bg-gradient-to-r from-purple-400 via-pink-400 to-indigo-400 bg-clip-text text-transparent cursor-pointer hover:scale-110 transition-all duration-300 animate-gradient-x bg-[length:200%_200%] transform hover:-translate-y-1 hover:drop-shadow-lg"
         >
-          🤖 Jabba AI
+          <span class="flex items-center space-x-1">
+            <img src="/assets/images/jabba.jpg" alt="Jabba" class="w-8 h-8 rounded-full object-cover">
+            <span>Jabba AI</span>
+          </span>
         </div>
 
         <!-- Navigation with enhanced effects -->
