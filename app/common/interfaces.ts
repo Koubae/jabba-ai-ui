@@ -13,3 +13,13 @@ export interface Application {
     created: string
     updated: string
 }
+
+export interface Session {
+    id: string
+    application_id: string
+    user_id: string
+    name: string
+    created: string
+    updated: string
+}
+

@@ -1,13 +1,14 @@
 import {useLoggedIn} from "~/composables/useLoggedIn";
+import type {Session} from "~/common/interfaces";
 
-export const useListApplications = (redirectOnAuthFail = true) => {
+export const useListSessions = (redirectOnAuthFail = true) => {
     const { requireAuth, error: authError } = useLoggedIn()
     const loading = ref(false)
     const error = ref<string | null>(null)
 
 
-    const fetchApplications = async () => {
-        let response = null
+    const fetchSessions = async () : Promise<Array<Session>> => {
+        let response: Array<Session> = []
 
         try {
             loading.value = true
@@ -15,10 +16,10 @@ export const useListApplications = (redirectOnAuthFail = true) => {
 
             const token = requireAuth(redirectOnAuthFail)
             if (!token) {
-                return null
+                return response
             }
 
-            response = await $fetch('/api/chat/application/list-applications', {
+            response = await $fetch('/api/chat/session/list-sessions', {
                 method: "GET",
                 headers: {
                     'Authorization': `Bearer ${token}`
@@ -39,6 +40,6 @@ export const useListApplications = (redirectOnAuthFail = true) => {
         loading,
         error,
         authError,
-        fetchApplications
+        fetchSessions
     }
 }
