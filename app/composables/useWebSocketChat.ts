@@ -27,7 +27,7 @@ export class WebSocketChat {
         const channel = this.sessionConnection.owner.channel;
         const accessToken = getAuthToken();
         const endpoint = `${this.sessionConnection.chat_url}/api/v1/chat/ws/bot/create-connection/${sessionID}?member_id=${memberID}&channel=${channel}&access_token=${accessToken}`
-
+        console.debug(`WebSocket endpoint: ${sessionID}?member_id=${memberID}&channel=${channel}`)
         try {
             this.ws = new WebSocket(endpoint);
 

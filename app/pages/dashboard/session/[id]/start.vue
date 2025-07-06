@@ -1,8 +1,6 @@
-
 <script setup lang="ts">
 import type {Session, SessionConnection} from "~/common/interfaces";
 import {useStartSessions} from "~/composables/usesStartSessions";
-import {useLoginForOtherUser} from "~/composables/useLoginForOtherUser";
 
 definePageMeta({
   middleware: 'auth'
@@ -10,9 +8,6 @@ definePageMeta({
 
 const route = useRoute()
 const { startSession } = useStartSessions();
-const {loginOther} = useLoginForOtherUser()
-const {signup} = useSignup()
-const { user } = useUser()
 
 // Get session data from query params
 const sessionData = computed(() => {
@@ -30,17 +25,13 @@ const sessionData = computed(() => {
 const isLoading = ref(false)
 const error = ref('')
 const success = ref(false)
-const sessionConnection = ref<SessionConnection | null>(null)
+const sessionConnections = ref<SessionConnection[]>([])
 const router = useRouter()
 
-// Add member popup state
-const showAddMemberPopup = ref(false)
-const addMemberForm = ref({
-  username: '',
-  password: ''
-})
 const addMemberLoading = ref(false)
 const addMemberError = ref('')
+
+let memberIDIndex = 1
 
 const goBack = () => {
   router.push('/dashboard/session/list')
@@ -57,13 +48,13 @@ const sendCreateSessionRequest = async () => {
     return
   }
 
+  const memberID = `chat-tab-${memberIDIndex}`
   try {
-    const sessionPayload = await startSession(name, "chat-tab", "browser");
+    const sessionPayload = await startSession(name, memberID, "browser");
 
     if (sessionPayload) {
-      sessionConnection.value = sessionPayload;
+      sessionConnections.value = [sessionPayload];
       success.value = true;
-      console.log('Session started successfully:', sessionPayload);
     }
 
   } catch (err) {
@@ -75,76 +66,34 @@ const sendCreateSessionRequest = async () => {
 }
 
 const closeChatSession = () => {
-  sessionConnection.value = null;
+  sessionConnections.value = [];
   success.value = false;
 }
 
-const openAddMemberPopup = () => {
-  showAddMemberPopup.value = true
-  addMemberForm.value = { username: '', password: '' }
-  addMemberError.value = ''
-}
-
-const closeAddMemberPopup = () => {
-  showAddMemberPopup.value = false
-  addMemberForm.value = { username: '', password: '' }
-  addMemberError.value = ''
-}
-
-const validateAddMemberForm = () => {
-  if (!addMemberForm.value.username.trim()) {
-    addMemberError.value = 'Username is required'
-    return false
+const removeConnection = (connectionId: string) => {
+  sessionConnections.value = sessionConnections.value.filter(conn => conn.id !== connectionId)
+  if (sessionConnections.value.length === 0) {
+    success.value = false
   }
-
-  if (!addMemberForm.value.password.trim()) {
-    addMemberError.value = 'Password is required'
-    return false
-  }
-
-  if (addMemberForm.value.username.trim() === user.value?.username) {
-    addMemberError.value = 'Cannot add yourself as a member'
-    return false
-  }
-
-  return true
 }
 
 const addMember = async () => {
-  if (!validateAddMemberForm()) return
-
-  const applicationID: string = sessionConnection.value?.application_id || '';
-  if (!applicationID) {
-    addMemberError.value = "Cannot add new member, ApplicationID not found"
-    return
-  }
   const sessionName = sessionData.value?.name || '';
   if (!sessionName) {
     error.value = "Cannot add new member, sessionName not found"
-    isLoading.value = false
     return
   }
 
-  addMemberLoading.value = true
-  addMemberError.value = ''
-
-  const newMemberUsername = addMemberForm.value.username.trim()
-  const newMemberPassword = addMemberForm.value.password.trim()
+  memberIDIndex++;
+  const newMember = `chat-tab-${memberIDIndex}`
 
   try {
-    await signup(applicationID, newMemberUsername, newMemberPassword)
-    const newUser = await loginOther(applicationID, addMemberForm.value.username, addMemberForm.value.password)
-
-    if (!newUser) {
-      addMemberError.value = 'Failed to add member. Please try again.'
-      return
+    const sessionPayloadNewMember = await startSession(sessionName, newMember, "browser");
+    if (sessionPayloadNewMember) {
+      sessionPayloadNewMember.owner.member_id = newMember;
+      sessionConnections.value.push(sessionPayloadNewMember);
     }
 
-    console.log('New member added successfully:', newUser)
-    const sessionPayloadNewMember = await startSession(sessionName, "member-" + newUser.username, "browser", newUser.access_token);
-    console.log('New member session started successfully:', sessionPayloadNewMember)
-
-    closeAddMemberPopup()
   } catch (err) {
     addMemberError.value = 'Failed to add member. Please try again.'
     console.error('Error adding member:', err)
@@ -166,15 +115,7 @@ onMounted(async () => {
 
 <template>
   <div class="mt-8">
-    <!-- Top Left Button -->
-    <button
-        @click="openAddMemberPopup"
-        class="absolute cursor-pointer top-0 left-0 z-[9999] px-6 py-3 bg-yellow-600 hover:bg-yellow-400 text-white font-medium rounded-lg transition-colors shadow-lg"
-    >
-      Add Member
-    </button>
-
-    <div class="container mx-auto px-4 max-w-6xl">
+    <div class="container mx-auto px-4 max-w-full">
 
       <EffectsLoadingSpinner
           v-if="isLoading"
@@ -203,10 +144,19 @@ onMounted(async () => {
       </div>
 
       <!-- Step 2: Initialize the chat using the new SessionManager component -->
-      <div v-else-if="success && sessionConnection">
+      <div v-else-if="success && sessionConnections.length > 0">
+        <button
+            @click="addMember"
+            class="absolute cursor-pointer bottom-205 left-0 z-[9999] px-6 py-6 bg-amber-500 hover:bg-amber-200 text-white font-medium rounded-lg transition-all duration-300 shadow-lg hover:translate-y-[50px]"
+        >
+          Add Member ({{ sessionConnections.length }})
+        </button>
+
+
         <ChatSessionManager
-            :session-connection="sessionConnection"
+            :session-connections="sessionConnections"
             @close="closeChatSession"
+            @remove-connection="removeConnection"
         />
       </div>
 
@@ -223,76 +173,6 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Add Member Popup -->
-    <div v-if="showAddMemberPopup" class="fixed inset-0 bg-black/50 flex items-center justify-center z-[10000]">
-      <div class="bg-white/10 backdrop-blur-sm border border-white/20 rounded-lg p-6 w-full max-w-md mx-4">
-        <h3 class="text-white font-semibold text-xl mb-4">Add New Member</h3>
-
-        <!-- Error Message -->
-        <div v-if="addMemberError" class="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-lg">
-          <p class="text-red-400 text-sm">{{ addMemberError }}</p>
-        </div>
-
-        <form @submit.prevent="addMember">
-          <div class="mb-4">
-            <label for="username" class="block text-white font-medium mb-2">
-              Username *
-            </label>
-            <input
-                id="username"
-                v-model="addMemberForm.username"
-                type="text"
-                placeholder="Enter username"
-                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                :disabled="addMemberLoading"
-                required
-            />
-          </div>
-
-          <div class="mb-6">
-            <label for="password" class="block text-white font-medium mb-2">
-              Password *
-            </label>
-            <input
-                id="password"
-                v-model="addMemberForm.password"
-                type="password"
-                placeholder="Enter password"
-                class="w-full px-4 py-3 bg-white/10 border border-white/20 rounded-lg text-white placeholder-white/50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                :disabled="addMemberLoading"
-                required
-            />
-          </div>
-
-          <div class="flex gap-3">
-            <button
-                type="submit"
-                :disabled="addMemberLoading"
-                class="flex-1 px-4 py-3 bg-green-600 hover:bg-green-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors flex items-center justify-center gap-2"
-            >
-              <span v-if="addMemberLoading" class="animate-spin">⟳</span>
-              <span v-else>+</span>
-              {{ addMemberLoading ? 'Adding...' : 'Add Member' }}
-            </button>
-
-            <button
-                type="button"
-                @click="closeAddMemberPopup"
-                :disabled="addMemberLoading"
-                class="px-4 py-3 bg-gray-600 hover:bg-gray-700 disabled:bg-gray-500 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-
-        <div class="mt-4 p-3 bg-blue-500/10 border border-blue-500/30 rounded-lg">
-          <p class="text-blue-300 text-sm">
-            <span class="font-medium">Note:</span> You cannot add yourself as a member. Current user: {{ user?.username }}
-          </p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
