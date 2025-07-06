@@ -32,13 +32,23 @@ onMounted(() => {
 <template>
   <div class="login-form">
     <h2>Login</h2>
-    <form autocomplete="on" @submit.prevent="submitLogin">
-      <input v-model="applicationID" type="text" placeholder="Application ID"  required />
-      <input v-model="username" type="text" placeholder="Username" required />
-      <input v-model="password" type="password" placeholder="Password" required />
-      <button type="submit" :disabled="loading">Login</button>
-      <p v-if="error" class="error">{{ error }}</p>
-    </form>
+    <LoadingSpinner
+        v-if="loading"
+        text="Loging..."
+        container-class="min-h-[400px]"
+    />
+    <div v-else>
+      <form autocomplete="on" @submit.prevent="submitLogin">
+        <input v-model="applicationID" type="text" placeholder="Application ID"  required />
+        <input v-model="username" type="text" placeholder="Username" required />
+        <input v-model="password" type="password" placeholder="Password" required />
+        <button type="submit" :disabled="loading">Login</button>
+        <p v-if="error" class="error">{{ error }}</p>
+      </form>
+    </div>
+
+
+
 
     <p>
       Or Create a new account
