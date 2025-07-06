@@ -1,16 +1,17 @@
-import {useGetUser} from "~/composables/useGetUser";
-import {setAuthToken} from "~/common/auth";
+import type {UserAuth} from "~/common/interfaces";
+import {useGetOtherUser} from "~/composables/useGetOtherUser";
 
-export function useLogin() {
+export function useLoginForOtherUser() {
     const loading = ref(false)
     const error = ref<string | null>(null)
 
-    async function login(application_id: string, username: string, password: string): Promise<boolean | null> {
-        const { fetchUser } = useGetUser(true)
+    async function loginOther(application_id: string, username: string, password: string): Promise<null | UserAuth> {
+        const { fetchOtherUser } = useGetOtherUser(false)
         loading.value = true
         error.value = null
+        console.log('loginOther', application_id, username, password)
 
-        let authorized = false
+        let userAuth: null | UserAuth = null
         try {
             const data = await $fetch<LoginResponse>('/api/identity/login', {
                 method: 'POST',
@@ -19,34 +20,33 @@ export function useLogin() {
 
             const accessToken = data?.access_token
             if (accessToken) {
-                setAuthToken(accessToken)
-
                 try {
-                    const result = await fetchUser(accessToken)
-                    if (!result) {
+                    const user = await fetchOtherUser(accessToken)
+                    if (!user) {
                         error.value = 'Failed Fetch User data'
                         return null
                     }
-                    authorized = true
+                    userAuth = {
+                        access_token: accessToken,
+                        ...user
+                    }
                 } catch (err: unknown) {
-                    authorized = false
                     console.error(`Failed Fetch User data error ${err}`, {err: err})
                     error.value = err instanceof Error ? err.message : 'Failed Fetch User data'
                 }
             }
 
         } catch (err: unknown) {
-            authorized = false
             error.value = err instanceof Error ? err.message : 'Login failed'
         } finally {
             loading.value = false
         }
 
-        return authorized;
+        return userAuth;
 
     }
 
-    return { login, loading, error }
+    return { loginOther, loading, error }
 }
 
 interface LoginResponse {

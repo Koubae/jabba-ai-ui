@@ -1,22 +1,22 @@
 <script setup>
-// This middleware will check if user is authenticated
 definePageMeta({
   middleware: 'auth'
 })
 
-function logout() {
-  // Clear the auth token cookie
-  const cookie = useCookie('access_token')
-  cookie.value = null
-  // Redirect to login page
-  navigateTo('/login')
-}
 </script>
 
 <template>
   <div>
-    <h1>Home</h1>
-    <p>This is a Home. You can only see this if you're logged in.</p>
-    <button @click="logout">Logout</button>
+    <nav class="flex items-center justify-center space-x-2 mb-6 mt-8">
+        <NuxtLink to="/dashboard/application/list" class="px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-purple-600 text-white shadow-lg">
+          <span class="relative z-10">Applications</span>
+        </NuxtLink>
+      <NuxtLink to="/dashboard/session/list" class="px-4 py-2 rounded-lg font-medium transition-all duration-300 bg-amber-300 text-black shadow-lg">
+        <span class="relative z-10">Sessions</span>
+      </NuxtLink>
+    </nav>
+
+    <NuxtPage />
+
   </div>
 </template>
