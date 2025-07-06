@@ -1,12 +1,12 @@
 import {useLoggedIn} from "~/composables/useLoggedIn";
 
-export const useListApplications = (redirectOnAuthFail = false) => {
+export const useCreateApplications = (redirectOnAuthFail = false) => {
     const { requireAuth, error: authError } = useLoggedIn()
     const loading = ref(false)
     const error = ref<string | null>(null)
 
 
-    const fetchApplications = async () => {
+    const createApplication = async (name: string) => {
         let response = null
 
         try {
@@ -18,15 +18,16 @@ export const useListApplications = (redirectOnAuthFail = false) => {
                 return null
             }
 
-            response = await $fetch('/api/chat/application/list-applications', {
-                method: "GET",
+            response = await $fetch('/api/chat/application/create', {
+                method: "POST",
                 headers: {
                     'Authorization': `Bearer ${token}`
-                }
+                },
+                body: { name }
             })
 
         } catch (err: unknown) {
-            error.value = err instanceof Error ? err.message :  'Failed to fetch user'
+            error.value = err instanceof Error ? err.message :  'Failed to create application'
             throw err
         } finally {
             loading.value = false
@@ -39,6 +40,6 @@ export const useListApplications = (redirectOnAuthFail = false) => {
         loading,
         error,
         authError,
-        fetchApplications
+        createApplication
     }
 }
