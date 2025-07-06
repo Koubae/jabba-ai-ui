@@ -55,6 +55,20 @@ const hideTooltip = () => {
   activeMessage.value = null;
 };
 
+const getUsername = ((role: string, username: string): string => {
+  switch (role) {
+    case 'user':
+      return `${username}`;
+    case 'assistant':
+      return `🤖 ${username}`;
+    case 'system':
+      return `⚙️ ${username}`;
+    default:
+      return username;
+  }
+});
+
+
 // tooltip
 
 const scrollToBottom = () => {
@@ -179,7 +193,7 @@ onUnmounted(() => {
                 'bg-gray-500/20 text-gray-300'
               ]"
             >
-              {{message.username}}
+              {{getUsername(message.role, message.username)}}
             </span>
             <span class="text-gray-500 ml-2 text-xs">{{ message.member_id }}</span>
           </div>
