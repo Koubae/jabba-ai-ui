@@ -7,8 +7,6 @@ definePageMeta({
 
 <template>
   <div>
-    <h1>Home</h1>
-    <p>This is a Home. You can only see this if you're logged in.</p>
 
     <div class="user-profile-container">
       <h1>User Profile</h1>
