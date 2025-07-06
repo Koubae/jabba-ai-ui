@@ -6,6 +6,6 @@
     <br>
     <NuxtLink to="/login">Login</NuxtLink>
     <br>
-    <NuxtLink to="/protected">Protected Page</NuxtLink>
+    <NuxtLink to="/home">Home</NuxtLink>
   </div>
 </template>

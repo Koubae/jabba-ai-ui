@@ -9,7 +9,7 @@ const { login, loading, error } = useLogin()
 async function submitLogin() {
   const result = await login(applicationID, username.value, password.value)
   if (result) {
-    await navigateTo('/protected')
+    await navigateTo('/home')
   }
 }
 </script>
