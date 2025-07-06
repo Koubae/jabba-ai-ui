@@ -1,7 +1,7 @@
 export function useLogin() {
     const loading = ref(false)
     const error = ref<string | null>(null)
-    const cookie = useCookie('auth_token')
+    const cookie = useCookie('access_token')
 
     async function login(application_id: string, username: string, password: string) {
         loading.value = true
