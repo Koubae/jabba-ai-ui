@@ -1,12 +1,15 @@
 <script setup lang="ts">
 import type {Session, SessionConnection} from "~/common/interfaces";
 import {useStartSessions} from "~/composables/usesStartSessions";
+import {useLoginForOtherUser} from "~/composables/useLoginForOtherUser";
 
 definePageMeta({
   middleware: 'auth'
 })
 const route = useRoute()
 const { startSession } = useStartSessions();
+const {loginOther} = useLoginForOtherUser()
+const {signup} = useSignup()
 
 // Get session data from query params
 const sessionData = computed(() => {
@@ -62,8 +65,20 @@ const closeChatSession = () => {
   success.value = false;
 }
 
-const showAlert = () => {
-  alert('Top center button clicked!')
+const addMember = async () => {
+  console.log(sessionConnection.value)
+
+  const applicationID: string = sessionConnection.value?.application_id  || '';
+  if (!applicationID) {
+    alert("Cannot add new member, ApplicationID not found, call Jabba-AI support please")
+    return
+  }
+
+  const userName = "new_member_xyz"
+  const password = "pass"
+
+  await signup(applicationID, userName, password)
+  const user = await loginOther(applicationID, userName, password)
 }
 
 
@@ -81,8 +96,8 @@ onMounted(async () => {
   <div class="mt-8">
     <!-- Top Left Button -->
     <button
-        @click="showAlert"
-        class="cursor-pointer top-0 left-0 z-[9999] px-6 py-3 bg-yellow-600 hover:bg-yellow-400 text-white font-medium rounded-lg transition-colors shadow-lg"
+        @click="addMember"
+        class="absolute cursor-pointer top-0 left-0 z-[9999] px-6 py-3 bg-yellow-600 hover:bg-yellow-400 text-white font-medium rounded-lg transition-colors shadow-lg"
     >
       Add Member
     </button>

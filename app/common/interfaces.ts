@@ -6,6 +6,15 @@ export interface User {
     updated: string
 }
 
+export interface UserAuth {
+    access_token: string
+    id: number
+    application_id: string
+    username: string
+    created: string
+    updated: string
+}
+
 
 export interface Application {
     id: string

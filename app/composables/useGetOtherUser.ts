@@ -1,14 +1,14 @@
 import {useLoggedIn} from "~/composables/useLoggedIn";
-import type {SessionConnection} from "~/common/interfaces";
+import type {User} from "~/common/interfaces";
 
-export const useStartSessions = (redirectOnAuthFail = true) => {
+export const useGetOtherUser = (redirectOnAuthFail = false) => {
     const { requireAuth, error: authError } = useLoggedIn()
     const loading = ref(false)
     const error = ref<string | null>(null)
 
 
-    const startSession = async (name: string, member_id: string, channel: string, accessToken: string | null = null): Promise<SessionConnection | null> => {
-        let response: SessionConnection | null = null
+    const fetchOtherUser = async (accessToken: string | null = null): Promise<null | User> => {
+        let response: null | User = null
 
         try {
             loading.value = true
@@ -22,16 +22,15 @@ export const useStartSessions = (redirectOnAuthFail = true) => {
                 }
             }
 
-            response = await $fetch('/api/chat/session/start', {
-                method: "POST",
+            response = await $fetch('/api/identity/user', {
+                method: "GET",
                 headers: {
                     'Authorization': `Bearer ${token}`
-                },
-                body: { session_name: name, member_id: member_id, channel: channel }
+                }
             })
 
         } catch (err: unknown) {
-            error.value = err instanceof Error ? err.message :  'Failed to start session'
+            error.value = err instanceof Error ? err.message :  'Failed to fetch user'
             throw err
         } finally {
             loading.value = false
@@ -44,6 +43,6 @@ export const useStartSessions = (redirectOnAuthFail = true) => {
         loading,
         error,
         authError,
-        startSession
+        fetchOtherUser
     }
 }

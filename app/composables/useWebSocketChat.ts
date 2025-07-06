@@ -32,7 +32,6 @@ export class WebSocketChat {
             this.ws = new WebSocket(endpoint);
 
             this.ws.onopen = () => {
-                console.log('WebSocket connected');
                 this.isConnecting = false;
                 this.reconnectAttempts = 0;
                 this.onConnectionChange(true);
@@ -41,7 +40,6 @@ export class WebSocketChat {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data) as ChatMessage;
-                    console.log(JSON.stringify(message, null, 2))
                     this.onMessage(message);
                 } catch (error) {
                     console.error('Failed to parse WebSocket message:', error);
@@ -50,7 +48,6 @@ export class WebSocketChat {
             };
 
             this.ws.onclose = (event) => {
-                console.log('WebSocket disconnected:', event.code, event.reason);
                 this.isConnecting = false;
                 this.onConnectionChange(false);
 
