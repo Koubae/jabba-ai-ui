@@ -15,7 +15,7 @@ const emit = defineEmits<{
 const messageInput = ref('');
 const messagesContainer = ref<HTMLElement>();
 
-const { messages, isConnected, connectionError, connect, sendMessage, disconnect } = useWebSocketChat(props.sessionConnection);
+const { messages, isConnected, connect, sendMessage, disconnect } = useWebSocketChat(props.sessionConnection);
 
 const handleSendMessage = () => {
   if (!messageInput.value.trim() || !isConnected.value) return;
@@ -47,10 +47,10 @@ const tooltipPosition = ref({ x: 0, y: 0 });
 const activeMessage = ref<any>(null);
 
 const showTooltip = (message: any, event: MouseEvent) => {
-  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  // Position tooltip in the center of the viewport
   tooltipPosition.value = {
-    x: rect.left + rect.width / 2,
-    y: rect.top - 10
+    x: window.innerWidth / 2,
+    y: window.innerHeight / 2
   };
   activeTooltip.value = `${message.session_id}-${message.timestamp}-${message.member_id}`;
   activeMessage.value = message;
@@ -65,9 +65,10 @@ const tooltipStyles = computed(() => {
   return {
     left: `${tooltipPosition.value.x}px`,
     top: `${tooltipPosition.value.y}px`,
-    transform: 'translate(-50%, -100%)',
+    transform: 'translate(-50%, -50%)',
   };
 });
+
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -136,7 +137,7 @@ onUnmounted(() => {
         class="flex-1 overflow-y-auto p-3 space-y-3 scroll-smooth"
     >
       <div
-          v-for="(message, index) in messages"
+          v-for="(message, _) in messages"
           :key="`${message.session_id}-${message.timestamp}-${message.member_id}`"
           :class="[
           'flex relative group',
@@ -219,19 +220,71 @@ onUnmounted(() => {
       </form>
     </div>
 
-    <!-- Teleported Tooltip - moved outside the loop -->
+    <!-- Hacker-Style Teleported Tooltip -->
     <Teleport to="body">
       <div
           v-if="activeTooltip && activeMessage"
-          class="fixed pointer-events-none z-[9999] transition-opacity duration-200"
+          class="fixed pointer-events-none z-[9999] transition-all duration-300 ease-out"
           :style="tooltipStyles"
       >
-        <div class="bg-black/95 text-white text-sm rounded-lg p-4 min-w-[320px] max-w-[600px] max-h-[400px] overflow-y-auto whitespace-pre-wrap shadow-2xl border border-gray-600">
-          {{ JSON.stringify(activeMessage, null, 2) }}
+        <!-- Backdrop blur overlay -->
+        <div class="fixed inset-0 bg-black/20 backdrop-blur-sm -z-10"></div>
+
+        <!-- Main tooltip container -->
+        <div class="relative bg-black/95 border-2 border-green-500/50 rounded-lg shadow-2xl shadow-green-500/20 min-w-[400px] max-w-[700px] max-h-[500px] overflow-hidden">
+          <!-- Animated border glow -->
+          <div class="absolute inset-0 border-2 border-green-400/30 rounded-lg animate-pulse"></div>
+
+          <!-- Header -->
+          <div class="bg-gradient-to-r from-green-900/50 to-emerald-900/50 border-b border-green-500/30 p-3">
+            <div class="flex items-center gap-2">
+              <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+              <span class="text-green-400 font-mono text-sm font-bold">MESSAGE.DEBUG</span>
+              <div class="flex-1"></div>
+              <span class="text-green-300/70 font-mono text-xs">
+              {{ new Date().toLocaleTimeString() }}
+            </span>
+            </div>
+          </div>
+
+          <!-- Content -->
+          <div class="p-4 font-mono text-sm">
+            <!-- System info bar -->
+            <div class="flex items-center gap-2 mb-3 text-green-300/70 text-xs">
+              <span class="bg-green-500/20 px-2 py-1 rounded">SYS</span>
+              <span>ACCESSING DATA STREAM...</span>
+              <div class="flex gap-1">
+                <div class="w-1 h-1 bg-green-400 rounded-full animate-ping"></div>
+                <div class="w-1 h-1 bg-green-400 rounded-full animate-ping animation-delay-100"></div>
+                <div class="w-1 h-1 bg-green-400 rounded-full animate-ping animation-delay-200"></div>
+              </div>
+            </div>
+
+            <!-- JSON content -->
+            <div class="bg-black/50 border border-green-500/30 rounded p-3 max-h-[350px] overflow-y-auto scrollbar-thin scrollbar-thumb-green-500/30 scrollbar-track-transparent">
+              <pre class="text-green-400 text-xs leading-relaxed whitespace-pre-wrap">{{ JSON.stringify(activeMessage, null, 2) }}</pre>
+            </div>
+
+            <!-- Footer info -->
+            <div class="flex items-center justify-between mt-3 text-green-300/50 text-xs">
+              <span>{{ Object.keys(activeMessage).length }} FIELDS</span>
+              <span>{{ JSON.stringify(activeMessage).length }} BYTES</span>
+              <span class="flex items-center gap-1">
+              <div class="w-1 h-1 bg-green-400 rounded-full"></div>
+              SECURE
+            </span>
+            </div>
+          </div>
+
+          <!-- Corner accents -->
+          <div class="absolute top-0 left-0 w-4 h-4 border-t-2 border-l-2 border-green-400/60"></div>
+          <div class="absolute top-0 right-0 w-4 h-4 border-t-2 border-r-2 border-green-400/60"></div>
+          <div class="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-green-400/60"></div>
+          <div class="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-green-400/60"></div>
         </div>
-        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/95"></div>
       </div>
     </Teleport>
+
   </div>
 </template>
 
@@ -239,4 +292,38 @@ onUnmounted(() => {
 .messages-container {
   scroll-behavior: smooth;
 }
+
+
+/* Custom animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animation-delay-100 {
+  animation-delay: 100ms;
+}
+
+.animation-delay-200 {
+  animation-delay: 200ms;
+}
+
+/* Custom scrollbar */
+.scrollbar-thin {
+  scrollbar-width: thin;
+}
+
+.scrollbar-thumb-green-500\/30::-webkit-scrollbar-thumb {
+  background-color: rgba(34, 197, 94, 0.3);
+  border-radius: 0.25rem;
+}
+
+.scrollbar-track-transparent::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+}
+
 </style>
