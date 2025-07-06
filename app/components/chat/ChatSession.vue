@@ -52,7 +52,6 @@ const getRoleDisplay = (role: string): string => {
 
 const scrollToBottom = () => {
   nextTick(() => {
-    console.log("scrolling")
     if (messagesContainer.value) {
       messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
     }
@@ -62,7 +61,8 @@ const scrollToBottom = () => {
 // Auto-scroll when new messages arrive
 watch(messages, () => {
   scrollToBottom();
-});
+}, { flush: 'post', deep: true });
+
 
 // Connect on mount
 onMounted(() => {
@@ -116,7 +116,7 @@ onUnmounted(() => {
     <!-- Messages Area -->
     <div
         ref="messagesContainer"
-        class="flex-1 overflow-y-auto p-4 space-y-4"
+        class="flex-1 overflow-y-auto p-4 space-y-4 messages-container"
     >
       <div
           v-for="message in messages"
@@ -201,3 +201,10 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.messages-container {
+  scroll-behavior: smooth;
+}
+</style>
+
