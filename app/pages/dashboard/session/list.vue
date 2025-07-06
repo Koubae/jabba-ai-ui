@@ -33,6 +33,14 @@ const createNewSession = () => {
   navigateTo('/dashboard/session/create')
 }
 
+const startSession = (session: Session, event: Event) => {
+  // Prevent the card click event from firing
+  event.stopPropagation()
+
+  navigateTo(`/dashboard/session/${session.id}/start`)
+}
+
+
 onMounted(async () => {
   loadSessions()
 })
@@ -69,14 +77,25 @@ onMounted(async () => {
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 justify-items-center">
         <div
-            v-for="app in sessions"
-            :key="app.id"
-            @click="viewSession(app)"
+            v-for="session in sessions"
+            :key="session.id"
+            @click="viewSession(session)"
             class="w-full max-w-sm p-6 bg-white/10 rounded-lg backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-colors cursor-pointer hover:scale-105 transform"
         >
-          <h3 class="text-white font-semibold text-lg mb-2">{{ app.name }}</h3>
+          <div class="flex items-center justify-between mb-2">
+            <h3 class="text-white font-semibold text-lg">{{ session.name }}</h3>
+            <button
+                @click="startSession(session, $event)"
+                class="px-3 py-1 bg-green-500/80 hover:bg-green-500 text-white text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-1 hover:scale-105 transform shadow-sm"
+                title="Start Session"
+            >
+              <span class="text-xs">▶</span>
+              Start
+            </button>
+          </div>
+
           <div class="mt-4 pt-4 border-t border-white/10">
-            <p class="text-white/50 text-xs">Created: {{ new Date(app.created).toLocaleDateString() }}</p>
+            <p class="text-white/50 text-xs">Created: {{ new Date(session.created).toLocaleDateString() }}</p>
           </div>
         </div>
       </div>
