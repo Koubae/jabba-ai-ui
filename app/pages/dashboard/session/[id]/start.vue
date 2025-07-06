@@ -147,10 +147,11 @@ onMounted(async () => {
       <div v-else-if="success && sessionConnections.length > 0">
         <button
             @click="addMember"
-            class="absolute cursor-pointer top-0 left-0 z-[9999] px-6 py-3 bg-amber-500 hover:bg-amber-200 text-white font-medium rounded-lg transition-colors shadow-lg"
+            class="absolute cursor-pointer bottom-205 left-0 z-[9999] px-6 py-6 bg-amber-500 hover:bg-amber-200 text-white font-medium rounded-lg transition-all duration-300 shadow-lg hover:translate-y-[50px]"
         >
           Add Member ({{ sessionConnections.length }})
-        </button>aaa
+        </button>
+
 
         <ChatSessionManager
             :session-connections="sessionConnections"
