@@ -1,5 +1,31 @@
 {
   "name": "jabba-ai-ui",
+  "version": "0.0.0.dev",
+  "description": "The Jabba AI Chat UID",
+  "author": {
+    "name": "Federico Bau",
+    "email": "fredbau91@gmail.com",
+    "url": "https://federicobau.dev/"
+  },
+  "license": "MIT",
+  "keywords": [
+    "nuxt",
+    "vue",
+    "ai",
+    "ui",
+    "typescript",
+    "AI",
+    "chat",
+    "bot",
+    "jabba",
+    "starwars"
+  ],
+  "homepage": "https://github.com/Koubae/jabba-ai-ui",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Koubae/jabba-ai-ui"
+  },
+
   "private": true,
   "type": "module",
   "scripts": {
