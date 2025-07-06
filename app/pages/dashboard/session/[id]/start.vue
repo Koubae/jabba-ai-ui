@@ -62,6 +62,11 @@ const closeChatSession = () => {
   success.value = false;
 }
 
+const showAlert = () => {
+  alert('Top center button clicked!')
+}
+
+
 onMounted(async () => {
   if (!sessionData.value) {
     alert("Session data not loaded, session can't start");
@@ -74,6 +79,14 @@ onMounted(async () => {
 
 <template>
   <div class="mt-8">
+    <!-- Top Left Button -->
+    <button
+        @click="showAlert"
+        class="cursor-pointer top-0 left-0 z-[9999] px-6 py-3 bg-yellow-600 hover:bg-yellow-400 text-white font-medium rounded-lg transition-colors shadow-lg"
+    >
+      Add Member
+    </button>
+
     <div class="container mx-auto px-4 max-w-6xl">
 
       <EffectsLoadingSpinner
