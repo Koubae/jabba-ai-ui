@@ -1,5 +1,4 @@
-import logger from '~/server/core/logger'
-
+import logger from "~/server/core/logger";
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
@@ -12,8 +11,9 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const externalAuthURL = 'http://localhost:20000/api/v1/auth/login'
-    
+    const externalAuthURL = 'http://localhost:20000/api/v1/auth/signup'
+
+
     try {
         const response = await $fetch(externalAuthURL, {
             method: 'POST',
@@ -23,33 +23,33 @@ export default defineEventHandler(async (event) => {
             },
         })
 
-        logger.info(`Identity Login succeeded for ${username} (ApplicationID ${application_id})`)
-        return response
+        logger.info(`Identity Signup succeeded for ${username} (ApplicationID ${application_id}), response ${response}`)
+        return {
+            message: `User ${username} created successfully`
+        }
     } catch (error) {
         const fetchError = error as { status?: number; statusText?: string; data?: never }
-
-        if (fetchError.status === 401) {
+        
+        const status = fetchError.status ? fetchError.status : 500;
+        
+        if (status > 399 && status < 500) {
             throw createError({
-                statusCode: 401,
-                statusMessage: 'Invalid credentials'
+                statusCode: fetchError.status,
+                statusMessage: 'Signup failed'
             })
         }
 
-        logger.error(`Identity Service error during Login ${username} (ApplicationID ${application_id}) ${JSON.stringify({
-            status: fetchError.status,
+        logger.error(`Identity Service error during Signup for ${username} (ApplicationID ${application_id}) ${JSON.stringify({
+            status: status,
             statusText: fetchError.statusText,
             url: externalAuthURL,
             timestamp: new Date().toISOString(),
             error: error
         }, null, 2)}`)
 
-        // For other errors, throw a generic error
         throw createError({
-            statusCode: fetchError.status || 500,
-            statusMessage: fetchError.statusText || 'Authentication failed'
+            statusCode: 500,
+            statusMessage: 'Internal server error during signup'
         })
     }
-
-    
 })
-

@@ -31,14 +31,19 @@ onMounted(() => {
 <template>
   <div class="login-form">
     <h2>Login</h2>
-    <form @submit.prevent="submitLogin"
-    >
+    <form autocomplete="on" @submit.prevent="submitLogin">
       <input v-model="applicationID" type="text" placeholder="Application ID"  required />
       <input v-model="username" type="text" placeholder="Username" required />
       <input v-model="password" type="password" placeholder="Password" required />
       <button type="submit" :disabled="loading">Login</button>
       <p v-if="error" class="error">{{ error }}</p>
     </form>
+
+    <p>
+      Or Create a new account
+      <NuxtLink to="/signup">Singup here</NuxtLink>
+    </p>
+
   </div>
 </template>
 
