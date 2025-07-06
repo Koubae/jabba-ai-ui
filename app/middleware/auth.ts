@@ -1,7 +1,7 @@
-export default defineNuxtRouteMiddleware((_to, _from) => {
-    const access_token = useCookie('access_token')
+import {isAuthenticated} from "~/common/auth";
 
-    if (!access_token.value) {
+export default defineNuxtRouteMiddleware((_to, _from) => {
+    if (!isAuthenticated()) {
         alert("You must login first!")
         return navigateTo('/login')
     }
