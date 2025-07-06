@@ -85,7 +85,10 @@ const { isAuthenticated, logout } = useAuth()
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div class="text-center text-white/60 text-sm">
           <p class="hover:text-white/80 transition-colors duration-300 animate-pulse-slow">
-            © 2025 Jabba AI. Powered by AI Innovation.
+            © 2025 Jabba AI. By Federico Bau
+          </p>
+          <p class="hover:text-white/80 transition-colors duration-300 animate-pulse-slow">
+            <a  href="https://federicobau.dev/" target="_blank">federicobau.dev</a>
           </p>
         </div>
       </div>
