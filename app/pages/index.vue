@@ -2,50 +2,18 @@
   <div class="user-profile-container">
     <h1>User Profile</h1>
 
-    <!-- Loading State -->
-    <div v-if="loading" class="loading-container">
-      <div class="spinner"></div>
-      <p class="loading-text">Loading user data...</p>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="error-container">
-      <div class="error-icon">⚠️</div>
-      <h3 class="error-title">Oops! Something went wrong</h3>
-      <p class="error-message">{{ error }}</p>
-      <button @click="retryFetch" class="retry-button">
-        Try Again
-      </button>
-    </div>
-
-    <!-- Success State (when not loading and no error) -->
-    <div v-else class="content-container">
+    <div class="content-container">
       <div class="success-message">
         <div class="success-icon">✅</div>
         <p>User data loaded successfully!</p>
       </div>
 
-      <button @click="fetchUser" class="refresh-button">
-        Refresh Data
-      </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useGetUser } from '~/composables/useGetUser'
 
-const { loading, error, fetchUser } = useGetUser(true)
-
-// Call fetchUser when component mounts
-onMounted(() => {
-  fetchUser()
-})
-
-// Retry function for error state
-const retryFetch = () => {
-  fetchUser()
-}
 </script>
 
 <style scoped>

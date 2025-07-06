@@ -5,7 +5,6 @@ export const useLoggedIn = () => {
     const requireAuth = (redirectOnFail = false) => {
         if (!cookie.value) {
             error.value = 'Access token not found'
-
             if (redirectOnFail) {
                 navigateTo('/login')
                 return null
@@ -16,7 +15,6 @@ export const useLoggedIn = () => {
                 statusMessage: 'Forbidden - Access token required'
             })
         }
-
         return cookie.value
     }
 
