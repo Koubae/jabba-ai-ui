@@ -41,6 +41,7 @@ export class WebSocketChat {
             this.ws.onmessage = (event) => {
                 try {
                     const message = JSON.parse(event.data) as ChatMessage;
+                    console.log(JSON.stringify(message, null, 2))
                     this.onMessage(message);
                 } catch (error) {
                     console.error('Failed to parse WebSocket message:', error);

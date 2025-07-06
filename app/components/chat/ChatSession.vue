@@ -43,18 +43,6 @@ const formatTime = (timestamp: string): string => {
   });
 };
 
-const getRoleDisplay = (role: string): string => {
-  switch (role) {
-    case 'user':
-      return 'User';
-    case 'assistant':
-      return 'AI Assistant';
-    case 'system':
-      return 'System';
-    default:
-      return role;
-  }
-};
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -81,23 +69,17 @@ onUnmounted(() => {
 });
 </script>
 
+
 <template>
   <div class="flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden">
     <!-- Chat Header -->
-    <div class="bg-gray-800 p-2 border-b border-gray-700">
+    <div class="bg-gray-800 p-3 border-b border-gray-700">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-white font-semibold text-sm">{{ sessionConnection.name }}</h3>
           <p class="text-gray-400 text-xs">Session ID: {{ sessionConnection.id }}</p>
         </div>
         <div class="flex items-center gap-2">
-          <button
-              @click="goBack"
-              class="px-3 py-1.5 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors"
-          >
-            ← Back to Sessions
-          </button>
-
           <div class="flex items-center gap-2">
             <div
                 :class="[
@@ -119,36 +101,28 @@ onUnmounted(() => {
       </div>
     </div>
 
-    <!-- Connection Error -->
-    <div v-if="connectionError" class="bg-red-500/10 border-b border-red-500/30 p-2">
-      <div class="flex items-center gap-2">
-        <span class="text-red-400 text-sm">⚠</span>
-        <span class="text-red-400 text-xs">{{ connectionError }}</span>
-      </div>
-    </div>
-
     <!-- Messages Area -->
     <div
         ref="messagesContainer"
-        class="flex-1 overflow-y-auto py-1 px-5 space-y-1 scroll-smooth"
+        class="flex-1 overflow-y-auto p-3 space-y-3 scroll-smooth"
     >
       <div
-          v-for="message in messages"
+          v-for="(message, index) in messages"
           :key="`${message.session_id}-${message.timestamp}-${message.member_id}`"
           :class="[
-          'flex',
+          'flex relative group',
           message.role === 'user' ? 'justify-end' : 'justify-start'
         ]"
       >
-        <div class="max-w-xs lg:max-w-md">
-          <!-- Message Header (username, timestamp, etc.) -->
+        <div class="max-w-xs lg:max-w-md relative">
+          <!-- Message Header -->
           <div
               :class="[
               'text-xs text-gray-400 mb-1',
               message.role === 'user' ? 'text-right' : 'text-left'
             ]"
           >
-            <span class="font-medium text-xs">{{ message.username }}</span>
+            <span class="font-medium text-xs">{{ message.role }}</span>
             <span class="mx-1">•</span>
             <span class="text-xs">{{ formatTime(message.timestamp) }}</span>
             <span v-if="message.role !== 'user'" class="mx-1">•</span>
@@ -158,7 +132,7 @@ onUnmounted(() => {
           <!-- Message Content -->
           <div
               :class="[
-              'px-3 py-2 rounded-lg',
+              'px-3 py-2 rounded-lg relative',
               message.role === 'user'
                 ? 'bg-blue-600 text-white ml-auto'
                 : message.role === 'system'
@@ -169,9 +143,17 @@ onUnmounted(() => {
             ]"
           >
             <p class="text-xs">{{ message.message }}</p>
+
+            <!-- Simple Tooltip -->
+            <div class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+              <div class="bg-black/90 text-white text-xs rounded-lg p-3 max-w-xs max-h-48 overflow-y-auto whitespace-pre-wrap shadow-lg">
+                {{ JSON.stringify(message, null, 2) }}
+              </div>
+              <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/90"></div>
+            </div>
           </div>
 
-          <!-- Additional Info (role badge) -->
+          <!-- Additional Info -->
           <div
               :class="[
               'text-xs mt-1',
@@ -186,7 +168,7 @@ onUnmounted(() => {
                 'bg-gray-500/20 text-gray-300'
               ]"
             >
-              {{ getRoleDisplay(message.role) }}
+              {{message.username}}
             </span>
             <span class="text-gray-500 ml-2 text-xs">{{ message.member_id }}</span>
           </div>

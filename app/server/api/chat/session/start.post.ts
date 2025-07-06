@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
             body
         })
 
-        logger.info(`Started Session ${session_name}, response: ${response}`)
+        logger.info(`Started Session ${session_name}, response: ${JSON.stringify(response, null, 2)}`)
         return response
     } catch (error) {
         const fetchError = error as { status?: number; statusText?: string; data?: never }
