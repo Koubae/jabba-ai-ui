@@ -41,7 +41,7 @@ onMounted(() => {
 
     <p>
       Or Create a new account
-      <NuxtLink to="/signup">Singup here</NuxtLink>
+      <NuxtLink to="/auth/signup">Singup here</NuxtLink>
     </p>
 
   </div>

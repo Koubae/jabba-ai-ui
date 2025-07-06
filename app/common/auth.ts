@@ -9,7 +9,7 @@ export function logout() {
     removeUserFromStorage()
 
     // Redirect to login page
-    navigateTo('/login')
+    navigateTo('/auth/login')
 }
 
 /**

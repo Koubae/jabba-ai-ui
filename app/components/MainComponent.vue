@@ -11,8 +11,8 @@ const { isAuthenticated, logout } = useAuth()
       <Transition name="fade" mode="out-in">
         <!-- Not authenticated -->
         <div v-if="!isAuthenticated" key="public" class="nav-section">
-          <NuxtLink to="/login" class="nav-link">Login</NuxtLink>
-          <NuxtLink to="/signup" class="nav-link">Signup</NuxtLink>
+          <NuxtLink to="/app/pages/auth/login" class="nav-link">Login</NuxtLink>
+          <NuxtLink to="/app/pages/auth/signup" class="nav-link">Signup</NuxtLink>
         </div>
 
         <!-- Authenticated -->

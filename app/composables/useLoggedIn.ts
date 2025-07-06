@@ -6,7 +6,7 @@ export const useLoggedIn = () => {
         if (!cookie.value) {
             error.value = 'Access token not found'
             if (redirectOnFail) {
-                navigateTo('/login')
+                navigateTo('/auth/login')
                 return null
             }
 

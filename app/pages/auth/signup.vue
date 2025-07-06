@@ -10,7 +10,7 @@ const { signup, loading, error } = useSignup()
 async function submitSignup() {
   const result = await signup(applicationID.value, username.value, password.value)
   if (result) {
-    await navigateTo('/login')
+    await navigateTo('/auth/login')
   }
 }
 </script>
@@ -27,7 +27,7 @@ async function submitSignup() {
     </form>
     <p>
       Already have an account?
-      <NuxtLink to="/login">Login here</NuxtLink>
+      <NuxtLink to="/auth/login">Login here</NuxtLink>
     </p>
   </div>
 </template>
