@@ -45,7 +45,7 @@ async function submitSignup() {
           </div>
 
           <!-- Loading Spinner -->
-          <LoadingSpinner
+          <EffectsLoadingSpinner
               v-if="loading"
               text="Creating your account..."
               container-class="min-h-[300px]"
