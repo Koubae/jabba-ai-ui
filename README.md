@@ -1,6 +1,35 @@
 jabba-ai-ui
 ==============
 
-The UI of jabba-ai 
+The UI of jabba-ai
 
 * [jabba-ai](https://github.com/Koubae/jabba-ai)
+
+
+### Quick Start
+
+*  Install
+
+```bash
+make init
+```
+
+* Run
+
+```bash
+make run
+```
+
+Go to http://localhost:3000
+
+
+### Deployment
+
+Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+
+
+```bash
+# Locally preview production build
+npm run preview
+npm run build
+```
