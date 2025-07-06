@@ -1,4 +1,4 @@
-import logger from "~/server/core/logger";
+import logger from '~/server/core/logger'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody(event)
