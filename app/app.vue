@@ -2,7 +2,7 @@
   <div>
     <p>Application</p>
     <NuxtPage />
-    <NuxtLink to="/public">Index</NuxtLink>
+    <NuxtLink to="/">Index</NuxtLink>
     <br>
     <NuxtLink to="/login">Login</NuxtLink>
     <br>

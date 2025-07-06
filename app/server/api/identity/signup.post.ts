@@ -11,11 +11,10 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    const externalAuthURL = 'http://localhost:20000/api/v1/auth/signup'
-
-
+    const identityURL = process.env.IDENTITY_URL || 'http://localhost:20000'
+    const endpoint = `${identityURL}/api/v1/auth/signup`
     try {
-        const response = await $fetch(externalAuthURL, {
+        const response = await $fetch(endpoint, {
             method: 'POST',
             body,
             headers: {
@@ -42,7 +41,7 @@ export default defineEventHandler(async (event) => {
         logger.error(`Identity Service error during Signup for ${username} (ApplicationID ${application_id}) ${JSON.stringify({
             status: status,
             statusText: fetchError.statusText,
-            url: externalAuthURL,
+            endpoint: endpoint,
             timestamp: new Date().toISOString(),
             error: error
         }, null, 2)}`)

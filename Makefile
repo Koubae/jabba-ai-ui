@@ -1,9 +1,5 @@
+.PHONY: run init stop logs build tests unit integration
 
-# --------------------------
-# Init
-# --------------------------
-init:
-	npm install
 
 # ============================
 # 	Run
@@ -20,3 +16,15 @@ run:
 # ============================
 # 	Tests
 # ============================
+
+
+# --------------------------
+# Init
+# --------------------------
+init:
+	npm install
+
+.update-env-file:
+	@echo 'Updating .env from .env.example 🖋️...'
+	# Updating .env
+	@cp .env.example .env
