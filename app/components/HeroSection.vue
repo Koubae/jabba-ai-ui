@@ -1,12 +1,6 @@
 <template>
   <section class="relative overflow-hidden py-20 sm:py-32 min-h-[85vh]">
-    <!-- Animated Background Effects -->
-    <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-pink-900/20 to-indigo-900/20 animate-gradient-x"></div>
-
-    <!-- Moving color orbs -->
-    <div class="absolute top-1/6 left-1/8 w-72 h-72 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-    <div class="absolute top-1/3 right-1/8 w-72 h-72 bg-gradient-to-r from-yellow-400 to-pink-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-    <div class="absolute bottom-1/7 left-1/3 w-72 h-72 bg-gradient-to-r from-indigo-400 to-purple-400 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
+    <EffectsCoolAnimation/>
 
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div class="text-center">
@@ -47,9 +41,6 @@
     </div>
   </section>
 </template>
-
-<script setup lang="ts">
-</script>
 
 <style scoped>
 @keyframes gradient-x {
@@ -109,3 +100,5 @@
   animation-delay: 4s;
 }
 </style>
+<script setup lang="ts">
+</script>

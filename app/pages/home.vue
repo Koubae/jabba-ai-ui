@@ -15,7 +15,7 @@ definePageMeta({
         <span class="relative z-10">Sessions</span>
       </NuxtLink>
     </nav>
-
+    <EffectsCoolAnimation/>
     <NuxtPage />
 
   </div>
