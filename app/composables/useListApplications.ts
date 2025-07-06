@@ -27,8 +27,7 @@ export const useListApplications = (redirectOnAuthFail = false) => {
                     'Authorization': `Bearer ${token}`
                 }
             })
-            error.value = "fuclme"
-
+            
         } catch (err: unknown) {
             error.value = err instanceof Error ? err.message :  'Failed to fetch user'
             throw err
