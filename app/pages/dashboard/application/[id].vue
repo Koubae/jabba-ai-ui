@@ -21,7 +21,7 @@ const applicationData = computed(() => {
 })
 
 const goBack = () => {
-  router.push('/dashboard/applications')
+  router.push('/dashboard/application/list')
 }
 
 
