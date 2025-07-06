@@ -6,14 +6,15 @@ definePageMeta({
 const router = useRouter()
 const { createSession } = useCreateSessions();
 
+
+const goBack = () => {
+  router.push('/dashboard/session/list')
+}
+
 // Form state
 const form = ref({
   name: ''
 })
-
-const isLoading = ref(false)
-const error = ref('')
-const success = ref(false)
 
 
 // Form validation
@@ -21,10 +22,10 @@ const isFormValid = computed(() => {
   return form.value.name.trim().length > 0
 })
 
-const goBack = () => {
-  router.push('/dashboard/session/list')
-}
 
+const isLoading = ref(false)
+const error = ref('')
+const success = ref(false)
 const sendCreateSessionRequest = async () => {
   if (!isFormValid.value) return
 

@@ -16,10 +16,10 @@ export default defineEventHandler(async (event) => {
     try {
         const response = await $fetch(endpoint, {
             method: 'POST',
-            body,
             headers: {
                 'Content-Type': 'application/json',
             },
+            body,
         })
 
         logger.info(`Identity Signup succeeded for ${username} (ApplicationID ${application_id}), response ${response}`)

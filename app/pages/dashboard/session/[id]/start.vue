@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import type {Session} from "~/common/interfaces";
+import {useStartSessions} from "~/composables/usesStartSessions";
 
 definePageMeta({
   middleware: 'auth'
 })
 const route = useRoute()
 const router = useRouter()
+const { startSession } = useStartSessions();
 
 // Get session data from query params
 const sessionData = computed(() => {
@@ -23,6 +25,46 @@ const sessionData = computed(() => {
 const goBack = () => {
   router.push('/dashboard/session/list')
 }
+
+
+const isLoading = ref(false)
+const error = ref('')
+const success = ref(false)
+const sendCreateSessionRequest = async () => {
+  isLoading.value = true
+  error.value = ''
+
+  const name = sessionData.value?.name || '';
+  if (!name) {
+    error.value = "Session must have a name"
+    return
+  }
+
+  try {
+
+    const sessionPayload = await startSession(name, "chat-tab", "browser");
+    success.value = true
+    console.log(sessionPayload)
+
+
+  } catch (err) {
+    error.value = 'Failed to create session. Please try again.'
+    console.error('Error creating session:', err)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+onMounted(async () => {
+  if (!sessionData.value) {
+    alert("Session data not loaded, session can't start");
+    return
+  }
+
+  await sendCreateSessionRequest()
+
+})
+
 
 
 </script>
