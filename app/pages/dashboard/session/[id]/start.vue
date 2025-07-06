@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import type {Session, SessionConnection} from "~/common/interfaces";
 import {useStartSessions} from "~/composables/usesStartSessions";
@@ -26,7 +25,7 @@ const sessionData = computed(() => {
 const isLoading = ref(false)
 const error = ref('')
 const success = ref(false)
-const sessionConnection = ref<SessionConnection | null>(null)
+const sessionConnections = ref<SessionConnection[]>([])
 const router = useRouter()
 
 const addMemberLoading = ref(false)
@@ -49,13 +48,13 @@ const sendCreateSessionRequest = async () => {
     return
   }
 
+  const memberID = `chat-tab-${memberIDIndex}`
   try {
-    const sessionPayload = await startSession(name, `chat-tab-${memberIDIndex}`, "browser");
+    const sessionPayload = await startSession(name, memberID, "browser");
 
     if (sessionPayload) {
-      sessionConnection.value = sessionPayload;
+      sessionConnections.value = [sessionPayload];
       success.value = true;
-      console.log('Session started successfully:', sessionPayload);
     }
 
   } catch (err) {
@@ -67,26 +66,33 @@ const sendCreateSessionRequest = async () => {
 }
 
 const closeChatSession = () => {
-  sessionConnection.value = null;
+  sessionConnections.value = [];
   success.value = false;
 }
 
-
+const removeConnection = (connectionId: string) => {
+  sessionConnections.value = sessionConnections.value.filter(conn => conn.id !== connectionId)
+  if (sessionConnections.value.length === 0) {
+    success.value = false
+  }
+}
 
 const addMember = async () => {
   const sessionName = sessionData.value?.name || '';
   if (!sessionName) {
     error.value = "Cannot add new member, sessionName not found"
-    isLoading.value = false
     return
   }
 
-  memberIDIndex ++;
+  memberIDIndex++;
   const newMember = `chat-tab-${memberIDIndex}`
 
   try {
     const sessionPayloadNewMember = await startSession(sessionName, newMember, "browser");
-    console.log(`New member connected successfully: ${newMember} -- ${JSON.stringify(sessionPayloadNewMember, null, 2)}`)
+    if (sessionPayloadNewMember) {
+      sessionPayloadNewMember.owner.member_id = newMember;
+      sessionConnections.value.push(sessionPayloadNewMember);
+    }
 
   } catch (err) {
     addMemberError.value = 'Failed to add member. Please try again.'
@@ -109,15 +115,7 @@ onMounted(async () => {
 
 <template>
   <div class="mt-8">
-    <!-- Top Left Button -->
-    <button
-        @click="addMember"
-        class="absolute cursor-pointer top-0 left-0 z-[9999] px-6 py-3 bg-yellow-600 hover:bg-yellow-400 text-white font-medium rounded-lg transition-colors shadow-lg"
-    >
-      Add Member
-    </button>
-
-    <div class="container mx-auto px-4 max-w-6xl">
+    <div class="container mx-auto px-4 max-w-full">
 
       <EffectsLoadingSpinner
           v-if="isLoading"
@@ -146,10 +144,18 @@ onMounted(async () => {
       </div>
 
       <!-- Step 2: Initialize the chat using the new SessionManager component -->
-      <div v-else-if="success && sessionConnection">
+      <div v-else-if="success && sessionConnections.length > 0">
+        <button
+            @click="addMember"
+            class="absolute cursor-pointer top-0 left-0 z-[9999] px-6 py-3 bg-yellow-600 hover:bg-yellow-400 text-white font-medium rounded-lg transition-colors shadow-lg"
+        >
+          Add Member ({{ sessionConnections.length }})
+        </button>aaa
+
         <ChatSessionManager
-            :session-connection="sessionConnection"
+            :session-connections="sessionConnections"
             @close="closeChatSession"
+            @remove-connection="removeConnection"
         />
       </div>
 
