@@ -25,6 +25,12 @@ const handleSendMessage = () => {
   messageInput.value = '';
 };
 
+const router = useRouter()
+const goBack = () => {
+  router.push('/dashboard/session/list')
+}
+
+
 const formatTime = (timestamp: string): string => {
   // Handle both string timestamps and numeric timestamps
   const date = typeof timestamp === 'string' && timestamp.includes('-')
@@ -74,30 +80,38 @@ onUnmounted(() => {
   disconnect();
 });
 </script>
+
 <template>
   <div class="flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden">
     <!-- Chat Header -->
-    <div class="bg-gray-800 p-4 border-b border-gray-700">
+    <div class="bg-gray-800 p-3 border-b border-gray-700">
       <div class="flex items-center justify-between">
         <div>
-          <h3 class="text-white font-semibold">{{ sessionConnection.name }}</h3>
-          <p class="text-gray-400 text-sm">Session ID: {{ sessionConnection.id }}</p>
+          <h3 class="text-white font-semibold text-sm">{{ sessionConnection.name }}</h3>
+          <p class="text-gray-400 text-xs">Session ID: {{ sessionConnection.id }}</p>
         </div>
         <div class="flex items-center gap-2">
+          <button
+              @click="goBack"
+              class="px-3 py-1.5 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors"
+          >
+            ← Back to Sessions
+          </button>
+
           <div class="flex items-center gap-2">
             <div
                 :class="[
-                'w-3 h-3 rounded-full',
+                'w-2 h-2 rounded-full',
                 isConnected ? 'bg-green-500' : 'bg-red-500'
               ]"
             ></div>
-            <span class="text-sm text-gray-400">
+            <span class="text-xs text-gray-400">
               {{ isConnected ? 'Connected' : 'Disconnected' }}
             </span>
           </div>
           <button
               @click="emit('close')"
-              class="text-gray-400 hover:text-white transition-colors"
+              class="text-gray-400 hover:text-white transition-colors text-sm"
           >
             ✕
           </button>
@@ -106,17 +120,17 @@ onUnmounted(() => {
     </div>
 
     <!-- Connection Error -->
-    <div v-if="connectionError" class="bg-red-500/10 border-b border-red-500/30 p-3">
+    <div v-if="connectionError" class="bg-red-500/10 border-b border-red-500/30 p-2">
       <div class="flex items-center gap-2">
-        <span class="text-red-400">⚠</span>
-        <span class="text-red-400 text-sm">{{ connectionError }}</span>
+        <span class="text-red-400 text-sm">⚠</span>
+        <span class="text-red-400 text-xs">{{ connectionError }}</span>
       </div>
     </div>
 
     <!-- Messages Area -->
     <div
         ref="messagesContainer"
-        class="flex-1 overflow-y-auto p-4 space-y-4 messages-container"
+        class="flex-1 overflow-y-auto p-3 space-y-3 scroll-smooth"
     >
       <div
           v-for="message in messages"
@@ -134,9 +148,9 @@ onUnmounted(() => {
               message.role === 'user' ? 'text-right' : 'text-left'
             ]"
           >
-            <span class="font-medium">{{ message.username }}</span>
+            <span class="font-medium text-xs">{{ message.username }}</span>
             <span class="mx-1">•</span>
-            <span>{{ formatTime(message.timestamp) }}</span>
+            <span class="text-xs">{{ formatTime(message.timestamp) }}</span>
             <span v-if="message.role !== 'user'" class="mx-1">•</span>
             <span v-if="message.role !== 'user'" class="text-xs opacity-70">{{ message.channel }}</span>
           </div>
@@ -144,7 +158,7 @@ onUnmounted(() => {
           <!-- Message Content -->
           <div
               :class="[
-              'px-4 py-2 rounded-lg',
+              'px-3 py-2 rounded-lg',
               message.role === 'user'
                 ? 'bg-blue-600 text-white ml-auto'
                 : message.role === 'system'
@@ -154,7 +168,7 @@ onUnmounted(() => {
                 : 'bg-gray-700 text-white mr-auto',
             ]"
           >
-            <p class="text-sm">{{ message.message }}</p>
+            <p class="text-xs">{{ message.message }}</p>
           </div>
 
           <!-- Additional Info (role badge) -->
@@ -174,26 +188,26 @@ onUnmounted(() => {
             >
               {{ getRoleDisplay(message.role) }}
             </span>
-            <span class="text-gray-500 ml-2">{{ message.member_id }}</span>
+            <span class="text-gray-500 ml-2 text-xs">{{ message.member_id }}</span>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Message Input -->
-    <div class="bg-gray-800 border-t border-gray-700 p-4">
+    <div class="bg-gray-800 border-t border-gray-700 p-3">
       <form @submit.prevent="handleSendMessage" class="flex gap-2">
         <input
             v-model="messageInput"
             type="text"
             placeholder="Type your message..."
             :disabled="!isConnected"
-            class="flex-1 bg-gray-700 text-white rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="flex-1 bg-gray-700 text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <button
             type="submit"
             :disabled="!isConnected || !messageInput.trim()"
-            class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-4 py-2 rounded-lg transition-colors"
+            class="bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-3 py-2 rounded-lg transition-colors text-sm"
         >
           Send
         </button>
@@ -201,6 +215,7 @@ onUnmounted(() => {
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .messages-container {

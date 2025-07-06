@@ -6,7 +6,6 @@ definePageMeta({
   middleware: 'auth'
 })
 const route = useRoute()
-const router = useRouter()
 const { startSession } = useStartSessions();
 
 // Get session data from query params
@@ -22,9 +21,6 @@ const sessionData = computed(() => {
   return null
 })
 
-const goBack = () => {
-  router.push('/dashboard/session/list')
-}
 
 const isLoading = ref(false)
 const error = ref('')
@@ -77,18 +73,6 @@ onMounted(async () => {
 <template>
   <div class="mt-8">
     <div class="container mx-auto px-4 max-w-6xl">
-      <!-- Header -->
-      <div class="flex items-center justify-between mb-6">
-        <h1 class="text-2xl font-bold text-white">
-          {{ success && sessionConnection ? 'Chat Session' : 'Start Session' }}
-        </h1>
-        <button
-            @click="goBack"
-            class="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-colors"
-        >
-          ← Back to Sessions
-        </button>
-      </div>
 
       <EffectsLoadingSpinner
           v-if="isLoading"
