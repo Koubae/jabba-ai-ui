@@ -1,4 +1,3 @@
-
 <script setup lang="ts">
 import type { SessionConnection } from "~/common/interfaces";
 import { useWebSocketChat } from "~/composables/useWebSocketChat";
@@ -30,7 +29,6 @@ const goBack = () => {
   router.push('/dashboard/session/list')
 }
 
-
 const formatTime = (timestamp: string): string => {
   // Handle both string timestamps and numeric timestamps
   const date = typeof timestamp === 'string' && timestamp.includes('-')
@@ -43,6 +41,33 @@ const formatTime = (timestamp: string): string => {
   });
 };
 
+// tooltip - Fixed implementation
+const activeTooltip = ref<string | null>(null);
+const tooltipPosition = ref({ x: 0, y: 0 });
+const activeMessage = ref<any>(null);
+
+const showTooltip = (message: any, event: MouseEvent) => {
+  const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
+  tooltipPosition.value = {
+    x: rect.left + rect.width / 2,
+    y: rect.top - 10
+  };
+  activeTooltip.value = `${message.session_id}-${message.timestamp}-${message.member_id}`;
+  activeMessage.value = message;
+};
+
+const hideTooltip = () => {
+  activeTooltip.value = null;
+  activeMessage.value = null;
+};
+
+const tooltipStyles = computed(() => {
+  return {
+    left: `${tooltipPosition.value.x}px`,
+    top: `${tooltipPosition.value.y}px`,
+    transform: 'translate(-50%, -100%)',
+  };
+});
 
 const scrollToBottom = () => {
   nextTick(() => {
@@ -57,7 +82,6 @@ watch(messages, () => {
   scrollToBottom();
 }, { flush: 'post', deep: true });
 
-
 // Connect on mount
 onMounted(() => {
   connect();
@@ -68,7 +92,6 @@ onUnmounted(() => {
   disconnect();
 });
 </script>
-
 
 <template>
   <div class="flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden">
@@ -138,7 +161,7 @@ onUnmounted(() => {
           <!-- Message Content -->
           <div
               :class="[
-              'px-3 py-2 rounded-lg relative',
+              'px-3 py-2 rounded-lg relative cursor-pointer',
               message.role === 'user'
                 ? 'bg-blue-600 text-white ml-auto'
                 : message.role === 'system'
@@ -147,16 +170,10 @@ onUnmounted(() => {
                 ? 'bg-green-600 text-white mr-auto'
                 : 'bg-gray-700 text-white mr-auto',
             ]"
+              @mouseenter="showTooltip(message, $event)"
+              @mouseleave="hideTooltip"
           >
             <p class="text-xs">{{ message.message }}</p>
-
-            <!-- Simple Tooltip -->
-            <div class="absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
-              <div class="bg-black/90 text-white text-xs rounded-lg p-3 max-w-xs max-h-48 overflow-y-auto whitespace-pre-wrap shadow-lg">
-                {{ JSON.stringify(message, null, 2) }}
-              </div>
-              <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/90"></div>
-            </div>
           </div>
 
           <!-- Additional Info -->
@@ -201,13 +218,25 @@ onUnmounted(() => {
         </button>
       </form>
     </div>
+
+    <!-- Teleported Tooltip - moved outside the loop -->
+    <Teleport to="body">
+      <div
+          v-if="activeTooltip && activeMessage"
+          class="fixed pointer-events-none z-[9999] transition-opacity duration-200"
+          :style="tooltipStyles"
+      >
+        <div class="bg-black/95 text-white text-sm rounded-lg p-4 min-w-[320px] max-w-[600px] max-h-[400px] overflow-y-auto whitespace-pre-wrap shadow-2xl border border-gray-600">
+          {{ JSON.stringify(activeMessage, null, 2) }}
+        </div>
+        <div class="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-black/95"></div>
+      </div>
+    </Teleport>
   </div>
 </template>
-
 
 <style scoped>
 .messages-container {
   scroll-behavior: smooth;
 }
 </style>
-
