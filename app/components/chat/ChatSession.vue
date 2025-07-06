@@ -84,7 +84,7 @@ onUnmounted(() => {
 <template>
   <div class="flex flex-col h-full bg-gray-900 rounded-lg overflow-hidden">
     <!-- Chat Header -->
-    <div class="bg-gray-800 p-3 border-b border-gray-700">
+    <div class="bg-gray-800 p-2 border-b border-gray-700">
       <div class="flex items-center justify-between">
         <div>
           <h3 class="text-white font-semibold text-sm">{{ sessionConnection.name }}</h3>
@@ -130,7 +130,7 @@ onUnmounted(() => {
     <!-- Messages Area -->
     <div
         ref="messagesContainer"
-        class="flex-1 overflow-y-auto p-3 space-y-3 scroll-smooth"
+        class="flex-1 overflow-y-auto py-1 px-5 space-y-1 scroll-smooth"
     >
       <div
           v-for="message in messages"
