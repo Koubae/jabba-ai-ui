@@ -6,6 +6,7 @@ import {useLoginForOtherUser} from "~/composables/useLoginForOtherUser";
 definePageMeta({
   middleware: 'auth'
 })
+
 const route = useRoute()
 const { startSession } = useStartSessions();
 const {loginOther} = useLoginForOtherUser()
@@ -29,9 +30,11 @@ const error = ref('')
 const success = ref(false)
 const sessionConnection = ref<SessionConnection | null>(null)
 const router = useRouter()
+
 const goBack = () => {
   router.push('/dashboard/session/list')
 }
+
 const sendCreateSessionRequest = async () => {
   isLoading.value = true
   error.value = ''
@@ -79,9 +82,12 @@ const addMember = async () => {
 
   await signup(applicationID, userName, password)
   const user = await loginOther(applicationID, userName, password)
+
+  // TODO: Add logic to create a new SessionManager component with the new member
+  // You can pass a copy of sessionConnection with the new member data
 }
 
-
+// Step 1: On mount, make a single call to collect sessionConnection data
 onMounted(async () => {
   if (!sessionData.value) {
     alert("Session data not loaded, session can't start");
@@ -130,9 +136,9 @@ onMounted(async () => {
         </div>
       </div>
 
-      <!-- Chat Session -->
-      <div v-else-if="success && sessionConnection" class="h-[calc(100vh-8rem)]">
-        <ChatSession
+      <!-- Step 2: Initialize the chat using the new SessionManager component -->
+      <div v-else-if="success && sessionConnection">
+        <ChatSessionManager
             :session-connection="sessionConnection"
             @close="closeChatSession"
         />
