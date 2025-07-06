@@ -96,7 +96,7 @@ onUnmounted(() => {
             </span>
           </div>
           <button
-              @click="$emit('close')"
+              @click="emit('close')"
               class="text-gray-400 hover:text-white transition-colors"
           >
             ✕
