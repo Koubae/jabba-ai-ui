@@ -11,7 +11,18 @@ run:
 # ============================
 #       Docker
 # ============================
+up:
+	@docker compose up
 
+down:
+	@docker compose down
+
+down-v:
+	@docker compose down -v
+
+build:
+	@echo 'Building images ...🛠️'
+	@docker compose build
 
 # ============================
 # 	Tests
