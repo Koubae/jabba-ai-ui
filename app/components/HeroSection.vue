@@ -1,5 +1,5 @@
 <template>
-  <section class="relative overflow-hidden py-20 sm:py-32">
+  <section class="relative overflow-hidden py-20 sm:py-32 min-h-[85vh]">
     <!-- Background Effects -->
     <div class="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-pink-900/20 to-indigo-900/20"></div>
     <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -40,3 +40,5 @@
     </div>
   </section>
 </template>
+<script setup lang="ts">
+</script>

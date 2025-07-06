@@ -9,6 +9,11 @@ export function redirectToHomePage(): void {
     navigateTo('/home')
 }
 
+export function redirectToWelcomePage(): void {
+    navigateTo('/welcome')
+}
+
+
 // ---------------------
 // Auth
 // ---------------------

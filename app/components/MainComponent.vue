@@ -5,8 +5,7 @@ const { isAuthenticated, logout } = useAuth()
 </script>
 
 <template>
-  <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-    <!-- Header -->
+  <main class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
     <header class="bg-white/10 backdrop-blur-sm border-b border-white/20 sticky top-0 z-50">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between items-center py-4">
@@ -59,8 +58,7 @@ const { isAuthenticated, logout } = useAuth()
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1">
-      <HeroSection v-if="!isAuthenticated" />
+    <main class="min-h-[85vh] flex-1">
       <NuxtPage />
     </main>
 
@@ -72,7 +70,7 @@ const { isAuthenticated, logout } = useAuth()
         </div>
       </div>
     </footer>
-  </div>
+  </main>
 </template>
 
 <style scoped>
