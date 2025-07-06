@@ -6,3 +6,10 @@ export interface User {
     updated: string
 }
 
+
+export interface Application {
+    id: string
+    name: string
+    created: string
+    updated: string
+}
