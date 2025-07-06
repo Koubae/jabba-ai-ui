@@ -46,14 +46,27 @@ onMounted(async () => {
         container-class="min-h-[200px]"
     />
 
-    <ErrorCard
-        v-else-if="error || authError"
-        :error="error"
-        :auth-error="authError"
-        title="Failed to Load Applications"
-        icon="🚨"
-        @retry="loadApplications"
-    />
+    <div v-else-if="error || authError">
+      <ErrorCard
+          :error="error"
+          :auth-error="authError"
+          title="Failed to Load Applications"
+          icon="🚨"
+          @retry="loadApplications"
+      />
+      <div class="p-8 text-center text-white/60">
+        <div class="max-w-md mx-auto">
+          <h3 class="text-lg font-medium text-white mb-2">No applications found</h3>
+          <p class="text-white/50 mb-6">Get started by creating your first application</p>
+          <button
+              @click="createNewApplication"
+              class="px-6 py-3 bg-gradient-to-r cursor-pointer from-purple-500 via-pink-500 to-red-500 hover:from-purple-600 hover:via-pink-600 hover:to-red-600 text-white font-medium rounded-lg transition-all duration-300 shadow-lg hover:shadow-purple-500/25 hover:scale-105 transform"
+          >
+            Create New Application
+          </button>
+        </div>
+      </div>
+    </div>
 
     <div v-else-if="applications" class="container mx-auto px-4">
       <div class="flex justify-between items-center mb-8">

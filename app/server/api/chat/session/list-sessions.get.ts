@@ -21,6 +21,11 @@ export default defineEventHandler(async (event) => {
     } catch (error) {
         const fetchError = error as { status?: number; statusText?: string; data?: never }
 
+        if (fetchError.status === 400) {
+            logger.warn(`List Sessions not found, error: ${error}`)
+            return []
+        }
+
         logger.error(`List Sessions error ${JSON.stringify({
             status: fetchError.status,
             statusText: fetchError.statusText,
