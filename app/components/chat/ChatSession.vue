@@ -80,6 +80,12 @@ onUnmounted(() => {
           <p class="text-gray-400 text-xs">Session ID: {{ sessionConnection.id }}</p>
         </div>
         <div class="flex items-center gap-2">
+          <button
+              @click="goBack"
+              class="px-3 py-1.5 bg-white/10 text-white text-sm rounded-lg hover:bg-white/20 transition-colors"
+          >
+            ← Back to Sessions
+          </button>
           <div class="flex items-center gap-2">
             <div
                 :class="[
