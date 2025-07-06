@@ -118,18 +118,31 @@ const addMember = async () => {
     addMemberError.value = "Cannot add new member, ApplicationID not found"
     return
   }
+  const sessionName = sessionData.value?.name || '';
+  if (!sessionName) {
+    error.value = "Cannot add new member, sessionName not found"
+    isLoading.value = false
+    return
+  }
 
   addMemberLoading.value = true
   addMemberError.value = ''
 
+  const newMemberUsername = addMemberForm.value.username.trim()
+  const newMemberPassword = addMemberForm.value.password.trim()
+
   try {
-    await signup(applicationID, addMemberForm.value.username, addMemberForm.value.password)
+    await signup(applicationID, newMemberUsername, newMemberPassword)
     const newUser = await loginOther(applicationID, addMemberForm.value.username, addMemberForm.value.password)
 
-    console.log('New member added successfully:', newUser)
+    if (!newUser) {
+      addMemberError.value = 'Failed to add member. Please try again.'
+      return
+    }
 
-    // TODO: Add logic to create a new SessionManager component with the new member
-    // You can pass a copy of sessionConnection with the new member data
+    console.log('New member added successfully:', newUser)
+    const sessionPayloadNewMember = await startSession(sessionName, "member-" + newUser.username, "browser", newUser.access_token);
+    console.log('New member session started successfully:', sessionPayloadNewMember)
 
     closeAddMemberPopup()
   } catch (err) {
