@@ -21,12 +21,14 @@ const sessionData = computed(() => {
   return null
 })
 
-
 const isLoading = ref(false)
 const error = ref('')
 const success = ref(false)
 const sessionConnection = ref<SessionConnection | null>(null)
-
+const router = useRouter()
+const goBack = () => {
+  router.push('/dashboard/session/list')
+}
 const sendCreateSessionRequest = async () => {
   isLoading.value = true
   error.value = ''
