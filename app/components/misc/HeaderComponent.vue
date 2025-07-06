@@ -2,6 +2,8 @@
 import { redirectToIndexPage } from "~/common/redirects";
 
 const { isAuthenticated, logout } = useAuth()
+const { user } = useUser();
+
 </script>
 
 <template>
@@ -42,13 +44,8 @@ const { isAuthenticated, logout } = useAuth()
 
             <!-- Authenticated -->
             <div v-else key="private" class="flex items-center space-x-3">
-              <NuxtLink
-                  to="/home"
-                  class="group px-4 py-2 text-sm font-medium text-white/80 hover:text-white hover:bg-white/20 rounded-lg transition-all duration-300 backdrop-blur-sm border border-white/10 hover:border-white/30 transform hover:-translate-y-0.5 hover:scale-105 relative overflow-hidden"
-              >
-                <span class="relative z-10">🏠 Home</span>
-                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-              </NuxtLink>
+              <UserAvatar v-if="user" :user="user" />
+
               <button
                   @click="logout"
                   class="group px-4 py-2 text-sm font-medium bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 text-white rounded-lg transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 hover:scale-105 relative overflow-hidden"

@@ -1,5 +1,6 @@
 import logger from '~/server/core/logger'
 import {validateAuthToken} from "~/server/core/auth";
+import type {User} from "~/common/interfaces";
 
 export default defineEventHandler(async (event) => {
     const accessToken = validateAuthToken(event)
@@ -7,7 +8,7 @@ export default defineEventHandler(async (event) => {
     const identityURL = process.env.IDENTITY_URL || 'http://localhost:20000'
     const endpoint = `${identityURL}/api/v1/user`
     try {
-        const response = await $fetch<GetUserResponse>(endpoint, {
+        const response = await $fetch<User>(endpoint, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -43,12 +44,3 @@ export default defineEventHandler(async (event) => {
     }
 
 })
-
-
-interface GetUserResponse {
-    id: number
-    application_id: string
-    username: string
-    created: string
-    updated: string
-}
