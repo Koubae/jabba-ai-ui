@@ -1,9 +1,14 @@
 jabba-ai-ui
 ==============
 
-The UI of jabba-ai
+_The UI of jabba-ai_
 
-* [jabba-ai](https://github.com/Koubae/jabba-ai)
+
+# SEE --> [jabba-ai](https://github.com/Koubae/jabba-ai)
+
+<p align="center">
+  <img src="docs/imgs/jabba.webp" />
+</p>
 
 
 ### Quick Start
